@@ -1,0 +1,28 @@
+﻿@{
+    Exception ex = ViewBag.Exception;
+    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+        var data = new { result = false, message = ex.Message, stackTrace = ex.StackTrace };
+        Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(data));
+    }
+    else
+    {
+        ViewBag.Title = "程序异常";
+        <h1 class="page-header">@(ViewBag.Title)</h1>
+        <blockquote>
+            <p>@(ex.Message)</p>
+            <!--<small>@Html.Raw(ex.StackTrace.Replace("\n", "<br />"))</small>-->
+        </blockquote>
+        <hr />
+        if (Request.UrlReferrer != null)
+        {
+            <a href="@(Request.UrlReferrer.ToString())" class="btn btn-default">返回</a>
+        }
+        <script>
+                $(function () {
+                    $("#main-panel").removeClass("panel-default").addClass("panel-danger");
+                });
+        </script>
+    }
+}

@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function Search() {
+            var btn = $("#form button[name='Search']");
+            btn.attr("disabled", "disabled");
+            var data = $("#form").serialize();
+            ShowMessage("正在统计计算,请稍等......");
+            $("#Result").load("/Home/Statistic", data, function () {
+                HideMessage();
+                btn.removeAttr("disabled");
+            });
+            return false;
+    }
+    $(function () {
+        $("input.datetimepicker").datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            minView: 2,
+            autoclose:true
+        });
+    });
+</script>
+
+<div class="page-header">
+    <h2>数据统计</h2>
+</div>
+
+
+<form class="form-inline" id="form" action="/Home/DownloadIndex">
+    <div class="form-group">
+        <label class="control-label">&nbsp;统计时间：</label>
+        <label class="radio-inline">
+            <input type="radio" name="TimeType" value="Day" checked />日统计
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="TimeType" value="Month" />月统计
+        </label>
+    </div>
+    <div class="form-group">
+        <label class="control-label">&nbsp; 统计类型：</label>
+        <select name="Type" class="form-control">
+            <option value="">请选择</option>
+            @foreach(StatictType type in Enum.GetValues(typeof(StatictType)))
+            {
+                <option value="@(type)">@(type.GetDescription())</option>
+            }
+ 
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label">&nbsp;起始时间：</label>
+        <input type="text" name="StartTime" class="form-control datetimepicker" placeholder="起始时间"/>
+    </div>
+    <div class="form-group">
+        <label class="control-label">&nbsp;终止时间：</label>
+        <input type="text" name="EndTime" class="form-control datetimepicker" placeholder="终止时间" />
+    </div>
+    <a  class="btn btn-primary" name="Search" onclick="Search()"><i class="glyphicon glyphicon-calendar"></i>&nbsp;立即统计</a>
+    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;下载表格</button>
+</form>
+
+<div class="row">
+    @{
+        Html.RenderPartial("_Message");
+    }
+    <div class="col-md-12" id="Result">
+       
+    </div>
+</div>
+

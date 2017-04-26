@@ -1,0 +1,62 @@
+﻿@{ 
+    Layout = null;
+    Dictionary<string, Dictionary<string, long>> dict = ViewBag.Dict;
+    List<string> heads = ViewBag.Head;
+    UserEvaluationParameter parameter = ViewBag.Parameter;
+    Dictionary<string, string> headDict = WinTypeHelper.Dict;
+}
+
+<hr />
+<div class="panel panel-default">
+    <div class="panel-heading">查询结果</div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>统计时间：</dt>
+            <dd>@(parameter.TimeType.GetDescription())</dd>
+            <dt>统计类型：</dt>
+            <dd>@(parameter.Type.GetDescription())</dd>
+            <dt>起始时间：</dt>
+            <dd>@(parameter.StartTime.HasValue ? parameter.StartTime.Value.ToString("yyyy-MM-dd") : "未指定")</dd>
+            <dt>终止时间：</dt>
+            <dd>@(parameter.EndTime.HasValue ? parameter.EndTime.Value.ToString("yyyy-MM-dd") : "未指定")</dd>
+        </dl>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>时间\@(parameter.Type.GetDescription())</th>
+                @foreach (var head in heads)
+                {
+                    if (headDict.ContainsKey(head))
+                    {
+                        <th>@(headDict[head])</th>
+                    }
+                    else
+                    {
+                        <th>@(head)</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in dict.OrderByDescending(e => e.Key))
+            {
+                <tr>
+                    <td>@(entry.Key)</td>
+                    @foreach (var head in heads)
+                {
+                    if (entry.Value.ContainsKey(head))
+                    {
+                            <td>@string.Format("{0}s", entry.Value[head])</td>
+                        }
+                        else
+                        {
+                            <td>/</td>
+                        }
+
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

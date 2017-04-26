@@ -1,0 +1,52 @@
+﻿@{
+    if (Model == null)
+    {
+        return;
+    }
+    var page = Model as PageParameter;
+    if (page.PageSize == 0)
+    {
+        page.PageSize = 10;
+    }
+
+    var pageCount = page.PageCount;
+
+    if (pageCount < 2)
+    {
+        return;
+    }
+
+    var pageRegex = new System.Text.RegularExpressions.Regex(@"page=(\d+)", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    Func<int, string> GetPageLink = (p) =>
+    {
+        var query = Request.Url.Query;
+        if (string.IsNullOrEmpty(query))
+        {
+            query = "?";
+        }
+        else if (query.Contains("page="))
+        {
+            query = pageRegex.Replace(query, string.Empty);
+        }
+        query += "&page=" + p;
+        return query;
+    };
+}
+
+<ul class="pagination">
+    <li><a href="@(GetPageLink(1))">首页</a></li>
+    @if (page.PageIndex > 1)
+    {
+        <li><a href="@(GetPageLink(page.PageIndex - 1))">上一页</a></li>
+    }
+    @if (page.PageIndex < pageCount - 1)
+    {
+        <li><a href="@(GetPageLink(page.PageIndex + 1))">下一页</a></li>
+    }
+    <li><a href="@(GetPageLink(pageCount))">尾页</a></li>
+    <li class="disabled"><a href="">@(page.PageIndex)/@(pageCount)</a></li>
+    <li class="disabled"><a href="">@string.Format("当前查询数量：{0}", page.RecordCount)</a></li>
+</ul>
+
+

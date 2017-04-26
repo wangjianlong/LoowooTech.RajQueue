@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "转移";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<UserEvaluation> list = ViewBag.List;
+    UserEvaluationParameter parameter = ViewBag.Parameter;
+    Dictionary<string, string> dict = WinTypeHelper.Dict;
+}
+
+<script>
+    $(function () {
+        $("a[name='Download']").click(function () {
+            var values = $("#Search").serialize();
+            $(this).attr("href", "/Home/DownloadMigrate?" + values);
+            return true;
+        });
+    });
+</script>
+
+<div class="page-header">
+    <h2>&nbsp;转移</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-2 well">
+            <fieldset><legend>转移设置</legend></fieldset>
+            <form method="get" id="Search">
+                <div class="form-group">
+                    <label class="control-label">&nbsp;叫号时间范围：</label>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="StartTime" placeholder="起始时间" class="form-control datetimepicker" value="@(parameter.StartTime.HasValue?parameter.StartTime.Value.ToString("yyyy-MM-dd"):"")" />
+                            <span class="input-group-addon">至</span>
+                            <input type="text" name="EndTime" placeholder="结束时间" class="form-control datetimepicker" value="@(parameter.EndTime.HasValue?parameter.EndTime.Value.ToString("yyyy-MM-dd"):"")" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;转移类型：</label>
+                    <div class="col-md-12">
+                        @foreach(MigrateType type in Enum.GetValues(typeof(MigrateType)))
+                        {
+                            <label class="radio-inline">
+                                <input type="radio" name="MigrateType" value="@(type)" @(parameter.MigrateType==type?"checked=checked":"") />@(type.GetDescription())
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;用户：</label>
+                    <div class="col-md-12">
+                        <select name="UserID" class="form-control">
+                            <option value="">全部</option>
+                            @foreach (var item in ViewBag.UserIDs as List<string>)
+                            {
+                                <option value="@(item)" @(parameter.UserID == item ? "selected=selected" : "")>@(item)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;查询:</label>
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-search"></i> 立即查询</button>
+                            <a href="" class="btn btn-sm btn-success" name="Download"><i class="glyphicon glyphicon-download-alt"></i>下载表格</a>
+                            <button type="button" class="btn btn-sm btn-default" onclick="history.back();"><i class="glyphicon glyphicon-arrow-left"></i>返回</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-10">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>用户ID</th>
+                        <th>来自用户ID</th>
+                        <th>窗口号</th>
+                        <th>业务类型</th>
+                        <th>部门</th>
+                        
+                        <th>取号时间</th>
+                        <th>叫号时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in list)
+                    {
+                        <tr>
+                            <td>@(item.UserID)</td>
+                            <td>@(item.FromUserID)</td>
+                            <td>@(item.WinID)</td>
+                            <td>@(dict.ContainsKey(item.WinType) ? dict[item.WinType] : item.WinType)</td>
+                            <td>@(item.Department)</td>
+                            
+                            <td>@(item.GetNumberTime)</td>
+                            <td>@(item.CallTime.HasValue ? item.CallTime.Value.ToString() : "")</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            @{ Html.RenderPartial("_pagination", parameter.Page as object);}
+        </div>
+    </div>
+</div>
+
+

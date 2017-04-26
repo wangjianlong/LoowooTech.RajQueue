@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title 管理系统 </title>
+    <link rel="icon" href="~/loowootech1.png" />
+    <link rel="shortcut icon" href="~/loowootech1.png" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    @*<link href="~/Content/jquery.datetimepicker.css" rel="stylesheet" />*@
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/TodoMessage.js"></script>
+    @*<script src="~/Scripts/jquery.datetimepicker.js"></script>*@
+    @*<script src="~/Scripts/Contract.js"></script>*@
+    <script src="~/Scripts/Faith.js"></script>
+    <script>
+        $(function () {
+            $("#Modal").on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+            });
+
+            $('[data-toggle="popover"]').popover();
+        })
+    </script>
+    <link href="~/Content/11/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+    <script src="~/Scripts/2/11/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/2/11/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/Home"><img alt="LoowooTech" src="~/loowootech2.png" /> </a>
+                <a class="navbar-brand" href="/Home">管理系统</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item @(ViewBag.Action.ToLower()=="Index".ToLower()?"active":"")">
+                        <a class="navbar-link" href="/Home/Index"><i class="glyphicon glyphicon-stats"></i>&nbsp;统计</a>
+                    </li>
+                    <li class="nav-item @(ViewBag.Action.ToLower()=="Search".ToLower()?"active":"")">
+                        <a class="navbar-link" href="/Home/Search"><i class="glyphicon glyphicon-search"></i>&nbsp;一般查询</a>
+                    </li>
+                    <li class="nav-item @(ViewBag.Action.ToLower()=="Migrate".ToLower()?"active":"")">
+                        <a class="navbar-link" href="/Home/Migrate"><i class="glyphicon glyphicon-transfer"></i>&nbsp;转移</a>
+                    </li>
+                    <li class="nav-item @(ViewBag.Action.ToLower()=="Wait".ToLower()?"active":"")">
+                        <a class="navbar-link" href="/Home/Wait"><i class="glyphicon glyphicon-send"></i>&nbsp;平均等待时间</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+    <br />
+    <br />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @RenderBody()
+                <hr />
+                <footer>
+                    <p>&copy; @DateTime.Now.Year - 杭州陆吾科技信息咨询有限公司  浙江省杭州市下城区中山北路632号越都商务大厦2101室</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" id="Modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+<script>
+    $(function () {
+        $("a[name='Check']").click(function () {
+            if (confirm("您确定？")) {
+                ShowMessage("正在审核，请稍等......");
+                var href = $(this).attr("href");
+                var reason = $("input[name='Reason']").val();
+                console.log(reason);
+                href = href + "&&reason=" + reason;
+                $.request(href, reason, function (json) {
+                    if (json.result == 0) {
+                        ShowErrorMessage(json.content);
+
+                    } else {
+                        ShowSuccessMessage("审核完成");
+                        location.href = "@(Request.Url.PathAndQuery)";
+                    }
+                });
+            }
+            return false;
+        });
+        $("a[name='Relieve']").click(function () {
+            var button = $(this);
+            button.text("正在解除").attr("disabled", "disabled");
+            ShowMessage("正在解除，请稍等......");
+            var href = $(this).attr("href");
+            $.request(href, null, function (json) {
+                if (json.result == 0) {
+                    ShowErrorMessage(json.content);
+                } else {
+                    ShowSuccessMessage("成功解除");
+                    location.href = "@(Request.Url.PathAndQuery)";
+                }
+            });
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    UserEvaluationParameter parameter = ViewBag.Parameter;
+    List<UserEvaluation> list = ViewBag.List;
+    Dictionary<string, string> dict = WinTypeHelper.Dict;
+}
+
+<script>
+    $(function () {
+        $("input.datetimepicker").datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: true,
+            minView: 0,
+            maxView:4
+        });
+        $("a[name='Download']").click(function () {
+            var values = $("#Search").serialize();
+            $(this).attr("href", "/Home/DownloadSearch?" + values);
+            return true;
+        })
+    });
+
+</script>
+<div class="page-header">
+    <h2>&nbsp;查询</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-3 well">
+            <fieldset><legend>查询设置</legend></fieldset>
+            <form method="get" id="Search">
+                <div class="form-group">
+                    <label  class="control-label">&nbsp;叫号时间范围：</label>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="StartTime" placeholder="起始时间" class="form-control datetimepicker" value="@(parameter.StartTime.HasValue?parameter.StartTime.Value.ToString():"")" />
+                            <span class="input-group-addon">至</span>
+                            <input type="text" name="EndTime" placeholder="结束时间" class="form-control datetimepicker" value="@(parameter.EndTime.HasValue?parameter.EndTime.Value.ToString():"")" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;用户:</label>
+                    <div class="col-md-12">
+                        <select name="UserID" class="form-control">
+                            <option value="">全部</option>
+                            @foreach(var item in ViewBag.UserIDs as List<string>)
+                            {
+                                <option value="@(item)" @(!string.IsNullOrEmpty(parameter.UserID)&&parameter.UserID==item?"selected=selected":"")>@(item)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;业务类型：</label>
+                    <div class="col-md-12">
+                        @foreach(var item in ViewBag.Types as List<string>)
+                        {
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="Type" value="@(item)" @(parameter.Types!=null&&parameter.Types.Contains(item)?"checked=checked":"") />@(dict.ContainsKey(item)?dict[item]:item)
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;窗口类型：</label>
+                    <div class="col-md-12">
+                        
+                        @foreach(var item in ViewBag.IDs as List<string>)
+                        {
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="ID" value="@(string.IsNullOrEmpty(item)?"空":item)" @(parameter.IDs!=null&&(parameter.IDs.Contains(item)||(parameter.IDs.Contains("空")&&string.IsNullOrEmpty(item)))?"checked=checked":"") />@(string.IsNullOrEmpty(item)?"空":item)
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;部门：</label>
+                    <div class="col-md-12">
+                        @foreach(var item in ViewBag.Departments as List<string>)
+                        {
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="Department" value="@(string.IsNullOrEmpty(item)?"空":item)" @(parameter.Departments!=null&&(parameter.Departments.Contains(item)||(parameter.Departments.Contains("空")&&string.IsNullOrEmpty(item)))?"checked=checked":"") />@(string.IsNullOrEmpty(item)?"空":item)
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">&nbsp;查询:</label>
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-search"></i> 立即查询</button>
+                            <a href="" class="btn btn-sm btn-success" name="Download"><i class="glyphicon glyphicon-download-alt"></i>下载表格</a>
+                            <button type="button" class="btn btn-sm btn-default" onclick="history.back();"><i class="glyphicon glyphicon-arrow-left"></i>返回</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-9">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>用户ID</th>
+                        <th>窗口类型</th>
+                        <th>业务类型</th>
+                        <th>部门</th>
+                        <th>取号时间</th>
+                        <th>叫号时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in list)
+                    {
+                        <tr>
+                            <td>@(item.UserID)</td>
+                            <td>@(item.WinID)</td>
+                            <td>@(dict.ContainsKey(item.WinType)?dict[item.WinType]:item.WinType)</td>
+                            <td>@(item.Department)</td>
+                            <td>@(item.GetNumberTime)</td>
+                            <td>@(item.CallTime.HasValue?item.CallTime.Value.ToString():"")</td>
+                        </tr>
+                    }
+                  
+                </tbody>
+            </table>
+            @{ Html.RenderPartial("_pagination", parameter.Page as object);}
+        </div>
+    </div>
+</div>
+
+
