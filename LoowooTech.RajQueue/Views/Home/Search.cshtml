@@ -9,13 +9,7 @@
 
 <script>
     $(function () {
-        $("input.datetimepicker").datetimepicker({
-            language: 'zh-CN',
-            format: 'yyyy-mm-dd hh:ii:ss',
-            autoclose: true,
-            minView: 0,
-            maxView:4
-        });
+       
         $("a[name='Download']").click(function () {
             var values = $("#Search").serialize();
             $(this).attr("href", "/Home/DownloadSearch?" + values);
@@ -37,9 +31,9 @@
                     <label  class="control-label">&nbsp;叫号时间范围：</label>
                     <div class="col-md-12">
                         <div class="input-group input-group-sm">
-                            <input type="text" name="StartTime" placeholder="起始时间" class="form-control datetimepicker" value="@(parameter.StartTime.HasValue?parameter.StartTime.Value.ToString():"")" />
+                            <input type="text" name="StartTime" placeholder="起始时间" class="form-control datetimepicker" value="@(parameter.StartTime.HasValue?parameter.StartTime.Value.ToString("yyyy-MM-dd hh:mm:ss"):"")" />
                             <span class="input-group-addon">至</span>
-                            <input type="text" name="EndTime" placeholder="结束时间" class="form-control datetimepicker" value="@(parameter.EndTime.HasValue?parameter.EndTime.Value.ToString():"")" />
+                            <input type="text" name="EndTime" placeholder="结束时间" class="form-control datetimepicker" value="@(parameter.EndTime.HasValue?parameter.EndTime.Value.ToString("yyyy-MM-dd hh:mm:ss"):"")" />
                         </div>
                     </div>
                 </div>

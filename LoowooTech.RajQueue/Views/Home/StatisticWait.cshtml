@@ -16,9 +16,9 @@
             <dt>统计类型：</dt>
             <dd>@(parameter.Type.GetDescription())</dd>
             <dt>起始时间：</dt>
-            <dd>@(parameter.StartTime.HasValue ? parameter.StartTime.Value.ToString("yyyy-MM-dd") : "未指定")</dd>
+            <dd>@(parameter.StartTime.HasValue ? parameter.StartTime.Value.ToString("yyyy-MM-dd hh:mm:ss") : "未指定")</dd>
             <dt>终止时间：</dt>
-            <dd>@(parameter.EndTime.HasValue ? parameter.EndTime.Value.ToString("yyyy-MM-dd") : "未指定")</dd>
+            <dd>@(parameter.EndTime.HasValue ? parameter.EndTime.Value.ToString("yyyy-MM-dd hh:mm:ss") : "未指定")</dd>
         </dl>
     </div>
     <table class="table table-striped table-bordered">

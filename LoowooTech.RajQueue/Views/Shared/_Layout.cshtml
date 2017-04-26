@@ -128,5 +128,13 @@
             });
             return false;
         });
+
+        $("input.datetimepicker").datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: true,
+            minView: 0,
+            maxView: 4
+        });
     });
 </script>
