@@ -27,7 +27,8 @@ namespace LoowooTech.RajQueue.Models
         {
             get
             {
-                return (CallTime.Value - GetNumberTime).Seconds;
+                TimeSpan time = CallTime.Value - GetNumberTime;
+                return time.Seconds + time.Minutes * 60 + time.Hours * 3600 + time.Days * 24 * 3600;
             }
         }
     }
