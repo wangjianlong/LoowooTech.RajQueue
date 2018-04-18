@@ -23,12 +23,13 @@ namespace LoowooTech.RajQueue.Models
 
         public DateTime GetNumberTime { get; set; }
         [NotMapped]
-        public int Seconds
+        public long Seconds
         {
             get
             {
                 TimeSpan time = CallTime.Value - GetNumberTime;
                 return time.Seconds + time.Minutes * 60 + time.Hours * 3600 + time.Days * 24 * 3600;
+                //return time.TotalSeconds;
             }
         }
     }

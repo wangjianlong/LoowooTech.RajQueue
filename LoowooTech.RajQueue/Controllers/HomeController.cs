@@ -68,6 +68,7 @@ namespace LoowooTech.RajQueue.Controllers
             };
             var dict = Core.UserEvaluationManager.StatisticWait(parameter);
             IWorkbook workbook = ExcelManager.Save(dict, parameter.Type, Extract<string>(dict), WinTypeHelper.Dict);
+            //IWorkbook workbook = null;
             MemoryStream ms = new MemoryStream();
             workbook.Write(ms);
             ms.Flush();
